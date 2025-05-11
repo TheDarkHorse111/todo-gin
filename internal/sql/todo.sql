@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS todo(
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL,
+    description TEXT
+)

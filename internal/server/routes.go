@@ -18,8 +18,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 	}))
 
 	r.GET("/", s.HelloWorldHandler)
-
 	r.GET("/health", s.healthHandler)
+
+	r.GET("/todo/:todoName", s.getTodoHandler)
+	r.GET("/todo", s.getAllTodosHandler)
+	r.POST("/todo", s.createTodoHandler)
+	r.PUT("/todo", s.updateTodoHandler)
+	r.DELETE("/todo/:todoName", s.deleteTodoHandler)
 
 	return r
 }

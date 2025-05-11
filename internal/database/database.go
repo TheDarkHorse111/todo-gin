@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
+	"to-do-gin/internal/entity"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
@@ -15,6 +17,8 @@ import (
 
 // Service represents a service that interacts with a database.
 type Service interface {
+	InitializeDb() error
+
 	// Health returns a map of health status information.
 	// The keys and values in the map are service-specific.
 	Health() map[string]string
@@ -22,6 +26,12 @@ type Service interface {
 	// Close terminates the database connection.
 	// It returns an error if the connection cannot be closed.
 	Close() error
+
+	CreateTodo(ctx context.Context, todo *entity.Todo) error
+	GetTodo(ctx context.Context, todoName string) (*entity.Todo, error)
+	GetAllTodos(ctx context.Context) ([]entity.Todo, error)
+	UpdateTodo(ctx context.Context, todo *entity.Todo) error
+	DeleteTodo(ctx context.Context, todoName string) error
 }
 
 type service struct {
@@ -52,6 +62,37 @@ func New() Service {
 		db: db,
 	}
 	return dbInstance
+}
+
+func (s *service) InitializeDb() error {
+	sqlDir := "./internal/sql"
+	files, err := os.ReadDir(sqlDir)
+	if err != nil {
+		return err
+	}
+
+	sqlFiles := make([]string, 0)
+	for _, file := range files {
+		sqlFiles = append(sqlFiles, filepath.Join(sqlDir, file.Name()))
+	}
+
+	if len(sqlFiles) == 0 {
+		log.Println("No migration files found.")
+		return nil
+	}
+
+	for _, file := range sqlFiles {
+		sqlFileBytes, err := os.ReadFile(file)
+		if err != nil {
+			return err
+		}
+		_, err = s.db.Exec(string(sqlFileBytes))
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // Health checks the health of the database connection by pinging the database.
