@@ -49,7 +49,7 @@ func (r *repository) GetAllTodos(ctx context.Context) ([]*model.Todo, error) {
 	}
 	var todos []*model.Todo
 	for _, entity := range todoEntities {
-		todos = append(todos, r.mapper.ToModel(&entity))
+		todos = append(todos, r.mapper.ToModel(entity))
 	}
 
 	return todos, nil

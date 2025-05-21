@@ -20,11 +20,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.GET("/", s.HelloWorldHandler)
 	r.GET("/health", s.healthHandler)
 
-	r.GET("/todo/:todoName", s.getTodoHandler)
-	r.GET("/todo", s.getAllTodosHandler)
-	r.POST("/todo", s.createTodoHandler)
-	r.PUT("/todo", s.updateTodoHandler)
-	r.DELETE("/todo/:todoName", s.deleteTodoHandler)
+	r.GET("/todo/:todoName", s.GetTodo)
+	r.GET("/todo", s.GetAllTodos)
+	r.POST("/todo", s.CreateTodo)
+	r.PUT("/todo", s.UpdateTodo)
+	r.DELETE("/todo/:todoName", s.DeleteTodo)
 
 	return r
 }
