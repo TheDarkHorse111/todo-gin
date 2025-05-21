@@ -12,14 +12,14 @@ func (s *service) CreateTodo(ctx context.Context, todo *entity.Todo) error {
 				RETURNING id
 			`
 
-	preparedStatment, err := s.db.PrepareContext(ctx, query)
+	preparedStatement, err := s.db.PrepareContext(ctx, query)
 	if err != nil {
 		return err
 	}
 
-	defer preparedStatment.Close()
+	defer preparedStatement.Close()
 
-	err = preparedStatment.QueryRowContext(ctx, todo.Name, todo.Description).Scan(&todo.ID)
+	err = preparedStatement.QueryRowContext(ctx, todo.Name, todo.Description).Scan(&todo.ID)
 	if err != nil {
 		return err
 	}
@@ -40,7 +40,7 @@ func (s *service) GetTodo(ctx context.Context, todoName string) (*entity.Todo, e
 	return &todo, nil
 
 }
-func (s *service) GetAllTodos(ctx context.Context) ([]entity.Todo, error) {
+func (s *service) GetAllTodos(ctx context.Context) ([]*entity.Todo, error) {
 	query := `
 			SELECT * FROM todo
 			`
@@ -50,14 +50,14 @@ func (s *service) GetAllTodos(ctx context.Context) ([]entity.Todo, error) {
 	}
 	defer rows.Close()
 
-	var todos []entity.Todo
+	var todos []*entity.Todo
 	for rows.Next() {
 		var todo entity.Todo
 		err = rows.Scan(&todo.ID, &todo.Name, &todo.Description)
 		if err != nil {
 			return nil, err
 		}
-		todos = append(todos, todo)
+		todos = append(todos, &todo)
 	}
 	return todos, nil
 }
