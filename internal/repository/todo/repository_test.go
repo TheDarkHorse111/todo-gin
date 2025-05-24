@@ -136,6 +136,7 @@ func TestRepository_GetTodo_ReturnError(t *testing.T) {
 }
 
 func TestRepository_GetAllTodos(t *testing.T) {
+	todos = make([]*entity.Todo, 0)
 	todoModel1 := model.Todo{
 		Name:        "todo1",
 		Description: "todoDesc1",
@@ -152,6 +153,7 @@ func TestRepository_GetAllTodos(t *testing.T) {
 	allTodos, _ := repository.GetAllTodos(context.Background())
 
 	assert.Equal(t, len(todos), len(allTodos))
+	assert.Equal(t, len(allTodos), 2)
 	assert.Equal(t, todoModel1, *allTodos[0])
 	assert.Equal(t, todoModel2, *allTodos[1])
 }
@@ -188,6 +190,7 @@ func TestRepository_UpdateTodo(t *testing.T) {
 }
 
 func TestRepository_DeleteTodo(t *testing.T) {
+	todos = make([]*entity.Todo, 0)
 	todoModel := model.Todo{
 		ID:          0,
 		Name:        "todo",
